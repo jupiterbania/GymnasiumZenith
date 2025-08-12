@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    unoptimized: false,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   webpack: (config, { isServer }) => {
     config.externals.push({

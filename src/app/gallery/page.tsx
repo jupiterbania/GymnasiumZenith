@@ -44,7 +44,7 @@ const GalleryPage = async () => {
                                                 <Card key={item.id} className="overflow-hidden group">
                                                     <CardContent className="p-0">
                                                         <div className="relative h-64 w-full">
-                                                            <Image src={item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill data-ai-hint={item.hint} className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                            <Image src={item.url || item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill data-ai-hint={item.hint} className="object-cover group-hover:scale-105 transition-transform duration-300" />
                                                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                                                         </div>
                                                         <div className="p-4">

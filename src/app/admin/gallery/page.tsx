@@ -115,7 +115,7 @@ const GalleryAdminPage = () => {
             <CardHeader className="p-0">
                 <div className="relative h-48 w-full">
                     <Image
-                        src={item.image}
+                        src={item.url || item.image || 'https://placehold.co/600x400.png'}
                         alt={item.title}
                         fill
                         className="object-cover"

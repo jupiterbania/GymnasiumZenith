@@ -22,6 +22,10 @@ import { GalleryItem, Member, Post } from "@/types";
 
 type FeaturedItem = (Post | GalleryItem) & { itemType: 'post' | 'gallery' };
 
+// Force dynamic rendering to get fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function Home() {
   const featuredItems: FeaturedItem[] = await getFeaturedItems();
   const allGalleryItems = await getGalleryItems();
@@ -48,7 +52,7 @@ export default async function Home() {
                         const galleryItem = !isPost ? (item as GalleryItem) : null;
                         
                         const href = isPost ? post?.redirectUrl : undefined;
-                        const imageUrl = isPost ? post?.imageUrl : galleryItem?.image;
+                        const imageUrl = isPost ? post?.imageUrl : (galleryItem?.url || galleryItem?.image);
                         const content = isPost ? post?.content : galleryItem?.description;
 
 
