@@ -39,156 +39,157 @@ export default async function Home() {
         </section>
 
         <section id="members" className="w-full py-12 md:py-24">
-            <div className="container px-4 md:px-6">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                            Meet Our Members
-                        </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Our community is our strength. Get to know some of our dedicated members.
-                        </p>
-                    </div>
-                </div>
-                {featuredMembers.length > 0 ? (
-                    <div className="grid gap-8 grid-cols-2 sm:grid-cols-2 md:grid-cols-4">
-                        {featuredMembers.slice(0, 4).map(member => (
-                            <div key={member.memberId} className="flex flex-col items-center text-center">
-                                <Avatar className="h-24 w-24 mb-4">
-                                    <AvatarImage src={member.photoUrl || 'https://placehold.co/128x128.png'} alt={member.fullName} />
-                                    <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <h3 className="font-semibold text-lg">{member.fullName}</h3>
-                                <Link href={`/members/${member.id}`} className="text-sm text-primary hover:underline">
-                                    View Profile
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center text-muted-foreground">
-                        <p>Our community is growing. Members will be featured here soon!</p>
-                    </div>
-                )}
-                <div className="text-center mt-12">
-                    <Button asChild variant="outline">
-                        <Link href="/members">
-                            View All Members <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Meet Our Members
+                </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Our community is our strength. Get to know some of our dedicated members.
+                </p>
+              </div>
             </div>
+            {featuredMembers.length > 0 ? (
+              <div className="grid gap-8 grid-cols-2 sm:grid-cols-2 md:grid-cols-4">
+                {featuredMembers.slice(0, 4).map(member => (
+                  <div key={member.memberId} className="flex flex-col items-center text-center">
+                    <Avatar className="h-24 w-24 mb-4">
+                      <AvatarImage src={member.photoUrl || 'https://placehold.co/128x128.png'} alt={member.fullName} />
+                      <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <h3 className="font-semibold text-lg">{member.fullName}</h3>
+                    <Link href={`/members/${member.id}`} className="text-sm text-primary hover:underline">
+                      View Profile
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground">
+                <p>Our community is growing. Members will be featured here soon!</p>
+              </div>
+            )}
+            <div className="text-center mt-12">
+              <Button asChild variant="outline">
+                <Link href="/members">
+                  View All Members <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </section>
 
         <section id="recent-posts" className="w-full py-12 md:py-24 bg-muted/50">
-            <div className="container px-4 md:px-6">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                            Recent Posts
-                        </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Stay updated with the latest news and updates from Gymnasium Zenith.
-                        </p>
-                    </div>
-                </div>
-                {recentPosts.length > 0 ? (
-                    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        {recentPosts.slice(0, 3).map(post => (
-                            <Card key={post.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
-                                <CardContent className="p-0">
-                                    {post.imageUrl && (
-                                        <div className="relative h-48 w-full">
-                                            <Image 
-                                                src={post.imageUrl} 
-                                                alt={post.title} 
-                                                fill 
-                                                className="object-cover group-hover:scale-105 transition-transform duration-300" 
-                                            />
-                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                                        </div>
-                                    )}
-                                    <div className="p-6">
-                                        <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
-                                        <p className="text-muted-foreground text-sm mb-4">{post.content}</p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-xs text-muted-foreground">
-                                                {new Date(post.createdAt).toLocaleDateString()}
-                                            </span>
-                                            {post.redirectUrl && (
-                                                <Button asChild variant="ghost" size="sm">
-                                                    <Link href={post.redirectUrl}>
-                                                        Read More <ArrowRight className="ml-1 h-3 w-3" />
-                                                    </Link>
-                                                </Button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                    {recentPosts.length > 3 && (
-                        <div className="text-center mt-12">
-                            <Button asChild variant="outline">
-                                <Link href="/admin/posts">
-                                    View More Posts <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </div>
-                    )}
-                ) : (
-                    <div className="text-center text-muted-foreground">
-                        <p>No posts have been published yet. Check back soon for updates!</p>
-                    </div>
-                )}
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Recent Posts
+                </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Stay updated with the latest news and updates from Gymnasium Zenith.
+                </p>
+              </div>
             </div>
+            {recentPosts.length > 0 ? (
+              <>
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {recentPosts.slice(0, 3).map(post => (
+                    <Card key={post.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                      <CardContent className="p-0">
+                        {post.imageUrl && (
+                          <div className="relative h-48 w-full">
+                            <Image 
+                              src={post.imageUrl} 
+                              alt={post.title} 
+                              fill 
+                              className="object-cover group-hover:scale-105 transition-transform duration-300" 
+                            />
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+                          </div>
+                        )}
+                        <div className="p-6">
+                          <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
+                          <p className="text-muted-foreground text-sm mb-4">{post.content}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(post.createdAt).toLocaleDateString()}
+                            </span>
+                            {post.redirectUrl && (
+                              <Button asChild variant="ghost" size="sm">
+                                <Link href={post.redirectUrl}>
+                                  Read More <ArrowRight className="ml-1 h-3 w-3" />
+                                </Link>
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                {recentPosts.length > 3 && (
+                  <div className="text-center mt-12">
+                    <Button asChild variant="outline">
+                      <Link href="/admin/posts">
+                        View More Posts <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center text-muted-foreground">
+                <p>No posts have been published yet. Check back soon for updates!</p>
+              </div>
+            )}
+          </div>
         </section>
 
         <section id="gallery" className="w-full py-12 md:py-24 bg-card border-y">
-            <div className="container px-4 md:px-6">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                            From Our Gallery
-                        </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            A glimpse into the life at Gymnasium Zenith.
-                        </p>
-                    </div>
-                </div>
-                {featuredGalleryItems.length > 0 ? (
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                        {featuredGalleryItems.slice(0, 4).map(item => (
-                            <Card key={item.id} className="overflow-hidden group">
-                                <CardContent className="p-0">
-                                    <div className="relative h-56 w-full">
-                                        <Image src={item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill className="object-cover" />
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                                    </div>
-                                    <div className="p-4">
-                                        <h3 className="font-semibold">{item.title}</h3>
-                                        <Badge variant="secondary" className="mt-2">{item.category}</Badge>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center text-muted-foreground">
-                        <p>No gallery items have been added yet.</p>
-                    </div>
-                )}
-                <div className="text-center mt-12">
-                    <Button asChild variant="outline">
-                        <Link href="/gallery">
-                            View Full Gallery <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  From Our Gallery
+                </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  A glimpse into the life at Gymnasium Zenith.
+                </p>
+              </div>
             </div>
+            {featuredGalleryItems.length > 0 ? (
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                {featuredGalleryItems.slice(0, 4).map(item => (
+                  <Card key={item.id} className="overflow-hidden group">
+                    <CardContent className="p-0">
+                      <div className="relative h-56 w-full">
+                        <Image src={item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill className="object-cover" />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold">{item.title}</h3>
+                        <Badge variant="secondary" className="mt-2">{item.category}</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground">
+                <p>No gallery items have been added yet.</p>
+              </div>
+            )}
+            <div className="text-center mt-12">
+              <Button asChild variant="outline">
+                <Link href="/gallery">
+                  View Full Gallery <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </section>
-
       </main>
       <Footer />
     </div>
