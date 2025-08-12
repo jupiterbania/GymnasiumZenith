@@ -11,7 +11,7 @@ import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AutoCarousel from "@/components/auto-carousel";
-import { getFeaturedItems, getGalleryItems, getMembers } from "@/lib/actions";
+import { getFeaturedItems, getGalleryItems, getMembers, getPosts } from "@/lib/actions";
 import { GalleryItem, Member, Post } from "@/types";
 
 type FeaturedItem = (Post | GalleryItem) & { itemType: 'post' | 'gallery' };
@@ -24,6 +24,7 @@ export default async function Home() {
   const featuredItems: FeaturedItem[] = await getFeaturedItems();
   const allGalleryItems = await getGalleryItems();
   const allMembers = await getMembers();
+  const recentPosts = await getPosts();
 
   const featuredGalleryItems = allGalleryItems.filter(item => item.showOnHomepage);
   const featuredMembers = allMembers.filter(member => member.showOnHomepage);
@@ -37,8 +38,6 @@ export default async function Home() {
             <AutoCarousel featuredItems={featuredItems} />
           </div>
         </section>
-
-
 
         <section id="members" className="w-full py-12 md:py-24">
             <div className="container px-4 md:px-6">
@@ -79,6 +78,62 @@ export default async function Home() {
                         </Link>
                     </Button>
                 </div>
+            </div>
+        </section>
+
+        <section id="recent-posts" className="w-full py-12 md:py-24 bg-muted/50">
+            <div className="container px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl">
+                            Recent Posts
+                        </h2>
+                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            Stay updated with the latest news and updates from Gymnasium Zenith.
+                        </p>
+                    </div>
+                </div>
+                {recentPosts.length > 0 ? (
+                    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {recentPosts.slice(0, 6).map(post => (
+                            <Card key={post.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                                <CardContent className="p-0">
+                                    {post.imageUrl && (
+                                        <div className="relative h-48 w-full">
+                                            <Image 
+                                                src={post.imageUrl} 
+                                                alt={post.title} 
+                                                fill 
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300" 
+                                            />
+                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
+                                        </div>
+                                    )}
+                                    <div className="p-6">
+                                        <h3 className="font-semibold font-headline text-lg mb-2 line-clamp-2">{post.title}</h3>
+                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{post.content}</p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs text-muted-foreground">
+                                                {new Date(post.createdAt).toLocaleDateString()}
+                                            </span>
+                                            {post.redirectUrl && (
+                                                <Button asChild variant="ghost" size="sm">
+                                                    <Link href={post.redirectUrl}>
+                                                        Read More <ArrowRight className="ml-1 h-3 w-3" />
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center text-muted-foreground">
+                        <p>No posts have been published yet. Check back soon for updates!</p>
+                    </div>
+                )}
             </div>
         </section>
 
