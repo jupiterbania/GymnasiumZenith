@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     remotePatterns: [
       {
@@ -25,7 +28,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.externals.push({
       'mongodb-client-encryption': 'mongodb-client-encryption',
       'kerberos': 'kerberos',
@@ -39,6 +42,9 @@ const nextConfig: NextConfig = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, 'src'),
     };
+    
+    // Ensure proper module resolution
+    config.resolve.modules = [path.resolve(__dirname, 'src'), 'node_modules'];
     
     return config;
   }
