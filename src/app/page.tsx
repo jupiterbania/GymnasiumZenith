@@ -110,8 +110,8 @@ export default async function Home() {
                                         </div>
                                     )}
                                     <div className="p-6">
-                                        <h3 className="font-semibold font-headline text-lg mb-2 line-clamp-2">{post.title}</h3>
-                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{post.content}</p>
+                                        <h3 className="font-semibold font-headline text-lg mb-2">{post.title}</h3>
+                                        <p className="text-muted-foreground text-sm mb-4">{post.content}</p>
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs text-muted-foreground">
                                                 {new Date(post.createdAt).toLocaleDateString()}
