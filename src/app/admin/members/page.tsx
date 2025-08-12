@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { IndianRupee, Loader2 } from "lucide-react";
+import { useRefresh } from "@/hooks/use-refresh";
+import { IndianRupee, Loader2, RefreshCw } from "lucide-react";
 import { getMembers, addMember as addMemberAction, updateMember as updateMemberAction, deleteMember as deleteMemberAction, getFeeSettings, saveFeeSettings } from "@/lib/actions";
 
 const getMonthsBetween = (startDate: Date, endDate: Date): string[] => {
@@ -86,6 +87,7 @@ export default function MembersPage() {
   const [admissionFee, setAdmissionFee] = useState(1000);
   const [monthlyFee, setMonthlyFee] = useState(500);
   const { toast } = useToast();
+  const { refresh } = useRefresh();
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -106,6 +108,15 @@ export default function MembersPage() {
 
   useEffect(() => {
     loadData();
+  }, [loadData]);
+
+  // Auto-refresh data every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, [loadData]);
 
   const handleSaveFees = () => {
@@ -295,6 +306,18 @@ export default function MembersPage() {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
+        <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold font-headline">Members Management</h1>
+            <Button 
+                variant="outline" 
+                onClick={loadData}
+                disabled={isLoading}
+                className="flex items-center gap-2"
+            >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh Data
+            </Button>
+        </div>
         <Card>
             <CardHeader>
                 <CardTitle>Fee Management</CardTitle>

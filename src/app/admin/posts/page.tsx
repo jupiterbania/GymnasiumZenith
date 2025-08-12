@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, Edit, Trash, PlusCircle, Loader2 } from 'lucide-react';
+import { MoreVertical, Edit, Trash, PlusCircle, Loader2, RefreshCw } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +30,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
+import { useRefresh } from '@/hooks/use-refresh';
 import { Post } from '@/types';
 import AddPostDialog from './add-post-dialog';
 import Image from 'next/image';
@@ -38,6 +39,7 @@ import { getPosts, addPost, updatePost, deletePost } from '@/lib/actions';
 const PostsAdminPage = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const { toast } = useToast();
+    const { refresh } = useRefresh();
     const [isLoading, setIsLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
 
@@ -55,6 +57,15 @@ const PostsAdminPage = () => {
 
     useEffect(() => {
         loadPosts();
+    }, [loadPosts]);
+
+    // Auto-refresh data every 30 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadPosts();
+        }, 30000);
+
+        return () => clearInterval(interval);
     }, [loadPosts]);
 
     const handleAddPost = (item: Omit<Post, 'id' | 'createdAt'>) => {
@@ -116,9 +127,20 @@ const PostsAdminPage = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold font-headline">Posts Management</h1>
-        <AddPostDialog onAddPost={handleAddPost}>
-            <Button><PlusCircle className="mr-2 h-4 w-4" /> Add New Post</Button>
-        </AddPostDialog>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={loadPosts}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <AddPostDialog onAddPost={handleAddPost}>
+              <Button><PlusCircle className="mr-2 h-4 w-4" /> Add New Post</Button>
+          </AddPostDialog>
+        </div>
       </div>
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (

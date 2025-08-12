@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreVertical, Edit, Trash, Loader2 } from 'lucide-react';
+import { MoreVertical, Edit, Trash, Loader2, RefreshCw, PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +33,13 @@ import AddItemDialog from './add-item-dialog';
 import { GalleryItem } from '@/types';
 import { useState, useEffect, useTransition, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useRefresh } from '@/hooks/use-refresh';
 import { getGalleryItems, addGalleryItem, updateGalleryItem, deleteGalleryItem } from '@/lib/actions';
 
 const GalleryAdminPage = () => {
     const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
     const { toast } = useToast();
+    const { refresh } = useRefresh();
     const [isLoading, setIsLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
 
@@ -55,6 +57,15 @@ const GalleryAdminPage = () => {
 
     useEffect(() => {
         loadItems();
+    }, [loadItems]);
+
+    // Auto-refresh data every 30 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadItems();
+        }, 30000);
+
+        return () => clearInterval(interval);
     }, [loadItems]);
 
     const handleAddItem = (item: Omit<GalleryItem, 'id' | 'createdAt' | 'image' | 'hint'>) => {
@@ -107,7 +118,18 @@ const GalleryAdminPage = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold font-headline">Gallery Management</h1>
-        <AddItemDialog onAddItem={handleAddItem} />
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={loadItems}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <AddItemDialog onAddItem={handleAddItem} />
+        </div>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {galleryItems.map((item) => (

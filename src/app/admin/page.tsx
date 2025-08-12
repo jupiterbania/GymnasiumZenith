@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, UserCheck, Image as ImageIcon, IndianRupee, FileText, Loader2 } from "lucide-react";
+import { Users, UserCheck, Image as ImageIcon, IndianRupee, FileText, Loader2, RefreshCw } from "lucide-react";
 import { Member, GalleryItem, Post } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import Image from "next/image";
 import { getMembers, getGalleryItems, getPosts } from "@/lib/actions";
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useRefresh } from "@/hooks/use-refresh";
 
 const DashboardPage = () => {
     const [members, setMembers] = useState<Member[]>([]);
@@ -18,6 +19,7 @@ const DashboardPage = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
+    const { refresh } = useRefresh();
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -39,6 +41,15 @@ const DashboardPage = () => {
 
     useEffect(() => {
         loadData();
+    }, [loadData]);
+
+    // Auto-refresh data every 30 seconds to keep dashboard current
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadData();
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(interval);
     }, [loadData]);
 
 
@@ -68,6 +79,15 @@ const DashboardPage = () => {
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
+                <Button 
+                    variant="outline" 
+                    onClick={loadData}
+                    disabled={isLoading}
+                    className="flex items-center gap-2"
+                >
+                    <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                    Refresh Data
+                </Button>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat, index) => (

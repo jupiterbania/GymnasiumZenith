@@ -6,6 +6,10 @@ import { Member } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getMembers } from '@/lib/actions';
 
+// Force dynamic rendering to get fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const MembersPage = async () => {
     const members = await getMembers();
 

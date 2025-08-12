@@ -6,6 +6,10 @@ import { ShieldAlert, UserX } from "lucide-react";
 import React from "react";
 import { getMember } from "@/lib/actions";
 
+// Force dynamic rendering to get fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function MemberProfilePage({ params: { id } }: { params: { id: string } }) {
   const member = await getMember(id);
 
