@@ -50,6 +50,8 @@ export type GalleryItem = {
     image: string;
     hint?: string;
     showOnHomepage?: boolean;
+    redirectUrl?: string;
+    videoPosterUrl?: string;
 };
 
 export type Post = {

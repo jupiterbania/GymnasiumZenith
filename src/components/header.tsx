@@ -20,7 +20,7 @@ import { ThemeToggle } from './theme-toggle';
 const navItems = [
     { href: "/gallery", label: "Gallery" },
     { href: "/members", label: "Members" },
-    { href: "/admin/posts", label: "Posts" },
+    { href: "/posts", label: "Posts" },
 ]
 
 const Header = () => {

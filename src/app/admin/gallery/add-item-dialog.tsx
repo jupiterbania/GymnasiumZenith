@@ -55,6 +55,8 @@ export default function AddItemDialog({ item, onAddItem, onUpdateItem, children 
             type: "image",
             category: "",
             showOnHomepage: false,
+            redirectUrl: "",
+            videoPosterUrl: "",
         });
     }
     setSuggestedCategories([]);
@@ -165,14 +167,24 @@ export default function AddItemDialog({ item, onAddItem, onUpdateItem, children 
             </TabsList>
             <TabsContent value="url" className="pt-4">
                 <div className="space-y-2">
-                    <Label htmlFor="url">Image URL</Label>
-                    <Input id="url" value={formData.url || ''} onChange={e => handleChange('url', e.target.value)} placeholder="https://example.com/image.png" />
+                    <Label htmlFor="url">{formData.type === 'video' ? 'Video URL' : 'Image URL'}</Label>
+                    <Input 
+                        id="url" 
+                        value={formData.url || ''} 
+                        onChange={e => handleChange('url', e.target.value)} 
+                        placeholder={formData.type === 'video' ? "https://example.com/video.mp4" : "https://example.com/image.png"} 
+                    />
                 </div>
             </TabsContent>
             <TabsContent value="upload" className="pt-4">
                 <div className="space-y-2">
-                    <Label htmlFor="file">Upload Image</Label>
-                    <Input id="file" type="file" onChange={handleFileChange} accept="image/*" />
+                    <Label htmlFor="file">Upload {formData.type === 'video' ? 'Video' : 'Image'}</Label>
+                    <Input 
+                        id="file" 
+                        type="file" 
+                        onChange={handleFileChange} 
+                        accept={formData.type === 'video' ? "video/*" : "image/*"} 
+                    />
                 </div>
             </TabsContent>
           </Tabs>
@@ -198,6 +210,33 @@ export default function AddItemDialog({ item, onAddItem, onUpdateItem, children 
               </SelectContent>
             </Select>
           </div>
+
+          {formData.type === 'video' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="redirectUrl">
+                  Redirect URL
+                </Label>
+                <Input 
+                  id="redirectUrl" 
+                  value={formData.redirectUrl || ''} 
+                  onChange={e => handleChange('redirectUrl', e.target.value)} 
+                  placeholder="https://example.com/video-page" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="videoPosterUrl">
+                  Video Poster URL
+                </Label>
+                <Input 
+                  id="videoPosterUrl" 
+                  value={formData.videoPosterUrl || ''} 
+                  onChange={e => handleChange('videoPosterUrl', e.target.value)} 
+                  placeholder="https://example.com/poster-image.jpg" 
+                />
+              </div>
+            </>
+          )}
           <div className="space-y-2">
              <Label htmlFor="category">
                 Category

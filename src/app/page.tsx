@@ -132,7 +132,7 @@ export default async function Home() {
                 {recentPosts.length > 3 && (
                   <div className="text-center mt-12">
                     <Button asChild variant="outline">
-                      <Link href="/admin/posts">
+                      <Link href="/posts">
                         View More Posts <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>
