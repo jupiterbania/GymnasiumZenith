@@ -3,11 +3,13 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
+import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import { Member } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { MemberActions } from "./member-actions"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export const columns: ColumnDef<Member>[] = [
   {
@@ -36,6 +38,24 @@ export const columns: ColumnDef<Member>[] = [
           </Button>
         )
       },
+    cell: ({ row }) => {
+        const member = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage 
+                src={member.photoUrl || 'https://placehold.co/32x32.png?text=No+Photo'} 
+                alt={member.fullName}
+                data-ai-hint="member profile photo"
+              />
+              <AvatarFallback className="text-xs">
+                {member.fullName.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{member.fullName}</span>
+          </div>
+        )
+    },
   },
   {
     accessorKey: "status",

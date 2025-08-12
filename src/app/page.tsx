@@ -5,18 +5,12 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AutoCarousel from "@/components/auto-carousel";
 import { getFeaturedItems, getGalleryItems, getMembers } from "@/lib/actions";
 import { GalleryItem, Member, Post } from "@/types";
 
@@ -40,64 +34,7 @@ export default async function Home() {
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
-             {featuredItems.length > 0 ? (
-                 <Carousel
-                  className="w-full"
-                  opts={{ loop: true }}
-                >
-                  <CarouselContent>
-                    {featuredItems.map((item) => {
-                        const isPost = item.itemType === 'post';
-                        const post = isPost ? (item as Post) : null;
-                        const galleryItem = !isPost ? (item as GalleryItem) : null;
-                        
-                        const href = isPost ? post?.redirectUrl : undefined;
-                        const imageUrl = isPost ? post?.imageUrl : (galleryItem?.url || galleryItem?.image);
-                        const content = isPost ? post?.content : galleryItem?.description;
-
-
-                        const Wrapper = href ? 'a' : 'div';
-
-                        return (
-                          <CarouselItem key={item.id}>
-                            <Wrapper 
-                                href={href || undefined}
-                                target={href ? '_blank' : undefined}
-                                rel={href ? 'noopener noreferrer' : undefined}
-                                className="block"
-                            >
-                                <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full">
-                                   <Image
-                                    src={imageUrl || 'https://placehold.co/1200x600.png'}
-                                    alt={item.title}
-                                    fill
-                                    className="rounded-xl object-cover"
-                                    data-ai-hint="gym announcement"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-xl" />
-                                  <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white">
-                                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-headline font-bold mb-4">
-                                      {item.title}
-                                    </h1>
-                                    <p className="text-lg md:text-xl max-w-2xl line-clamp-3">
-                                      {content}
-                                    </p>
-                                  </div>
-                                </div>
-                            </Wrapper>
-                          </CarouselItem>
-                        )
-                    })}
-                  </CarouselContent>
-                  <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 hover:bg-black/75" />
-                  <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 hover:bg-black/75" />
-                </Carousel>
-             ) : (
-                <div className="text-center py-20 bg-card rounded-xl">
-                  <h2 className="text-2xl font-bold font-headline">Welcome to Gymnasium Zenith</h2>
-                  <p className="text-muted-foreground mt-2">News and announcements will appear here.</p>
-                </div>
-             )}
+            <AutoCarousel featuredItems={featuredItems} />
           </div>
         </section>
 
