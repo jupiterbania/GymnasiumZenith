@@ -1,7 +1,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -101,32 +101,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="search" className="w-full py-12 md:py-24 bg-card border-y">
-            <div className="container px-4 md:px-6">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl">
-                            Find a Member
-                        </h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Search for fellow members of Gymnasium Zenith. Public profiles have limited information.
-                        </p>
-                    </div>
-                    <div className="w-full max-w-md space-y-2">
-                        <form className="flex space-x-2">
-                            <Input
-                                className="max-w-lg flex-1"
-                                placeholder="Enter member name or ID..."
-                                type="search"
-                            />
-                            <Button type="submit" size="icon">
-                                <Search className="h-4 w-4" />
-                            </Button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <section id="members" className="w-full py-12 md:py-24">
             <div className="container px-4 md:px-6">
