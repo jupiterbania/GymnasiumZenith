@@ -43,7 +43,7 @@ export default async function Home() {
             <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                     <div className="space-y-2">
-                        <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                             Meet Our Members
                         </h2>
                         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -59,7 +59,7 @@ export default async function Home() {
                                     <AvatarImage src={member.photoUrl || 'https://placehold.co/128x128.png'} alt={member.fullName} data-ai-hint="member portrait" />
                                     <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
                                 </Avatar>
-                                <h3 className="font-semibold font-headline text-lg">{member.fullName}</h3>
+                                <h3 className="font-semibold text-lg">{member.fullName}</h3>
                                 <Link href={`/members/${member.id}`} className="text-sm text-primary hover:underline">
                                     View Profile
                                 </Link>
@@ -85,7 +85,7 @@ export default async function Home() {
             <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                     <div className="space-y-2">
-                        <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                             Recent Posts
                         </h2>
                         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -110,7 +110,7 @@ export default async function Home() {
                                         </div>
                                     )}
                                     <div className="p-6">
-                                        <h3 className="font-semibold font-headline text-lg mb-2">{post.title}</h3>
+                                        <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
                                         <p className="text-muted-foreground text-sm mb-4">{post.content}</p>
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs text-muted-foreground">
@@ -150,7 +150,7 @@ export default async function Home() {
             <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                     <div className="space-y-2">
-                        <h2 className="text-3xl font-bold font-headline tracking-tighter sm:text-5xl">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                             From Our Gallery
                         </h2>
                         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
@@ -168,7 +168,7 @@ export default async function Home() {
                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                                     </div>
                                     <div className="p-4">
-                                        <h3 className="font-semibold font-headline">{item.title}</h3>
+                                        <h3 className="font-semibold">{item.title}</h3>
                                         <Badge variant="secondary" className="mt-2">{item.category}</Badge>
                                     </div>
                                 </CardContent>
