@@ -9,25 +9,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../../../../components/ui/dialog";
+import { Button } from "../../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+} from "../../../../components/ui/select";
+import { Textarea } from "../../../../components/ui/textarea";
+import { Badge } from "../../../../components/ui/badge";
 import { Loader2, PlusCircle, Sparkles, Upload } from "lucide-react";
-import { suggestGalleryCategories } from "@/lib/actions";
-import { useToast } from "@/hooks/use-toast";
-import { GalleryItem } from "@/types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
+import { suggestGalleryCategories } from "../../../../lib/actions";
+import { useToast } from "../../../../hooks/use-toast";
+import { GalleryItem } from "../../../../types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
+import { Switch } from "../../../../components/ui/switch";
 
 interface AddItemDialogProps {
     item?: GalleryItem;

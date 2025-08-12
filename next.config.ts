@@ -1,4 +1,5 @@
 import type {NextConfig} from 'next';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -32,6 +33,13 @@ const nextConfig: NextConfig = {
       'snappy': 'snappy',
       'aws4': 'aws4',
     });
+    
+    // Ensure path aliases work correctly
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+    };
+    
     return config;
   }
 };
