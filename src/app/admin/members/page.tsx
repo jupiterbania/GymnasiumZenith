@@ -110,33 +110,33 @@ export default function MembersPage() {
     loadData();
   }, [loadData]);
 
-  // Auto-refresh data every 30 seconds - only when page is visible
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (interval) clearInterval(interval);
-      } else {
-        interval = setInterval(() => {
-          loadData();
-        }, 30000);
-      }
-    };
-
-    if (!document.hidden) {
-      interval = setInterval(() => {
-        loadData();
-      }, 30000);
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      if (interval) clearInterval(interval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [loadData]);
+  // Auto-refresh disabled - only manual refresh available
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
+  //   
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       if (interval) clearInterval(interval);
+  //     } else {
+  //       interval = setInterval(() => {
+  //         loadData();
+  //       }, 30000);
+  //     }
+  //   };
+  //
+  //   if (!document.hidden) {
+  //     interval = setInterval(() => {
+  //       loadData();
+  //     }, 30000);
+  //   }
+  //
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+  //
+  //   return () => {
+  //     if (interval) clearInterval(interval);
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, [loadData]);
 
   const handleSaveFees = () => {
     startTransition(async () => {

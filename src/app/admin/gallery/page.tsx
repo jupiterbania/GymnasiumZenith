@@ -59,33 +59,33 @@ const GalleryAdminPage = () => {
         loadItems();
     }, [loadItems]);
 
-    // Auto-refresh data every 30 seconds - only when page is visible
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-        
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                if (interval) clearInterval(interval);
-            } else {
-                interval = setInterval(() => {
-                    loadItems();
-                }, 30000);
-            }
-        };
-
-        if (!document.hidden) {
-            interval = setInterval(() => {
-                loadItems();
-            }, 30000);
-        }
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        return () => {
-            if (interval) clearInterval(interval);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [loadItems]);
+    // Auto-refresh disabled - only manual refresh available
+    // useEffect(() => {
+    //     let interval: NodeJS.Timeout;
+    //     
+    //     const handleVisibilityChange = () => {
+    //         if (document.hidden) {
+    //             if (interval) clearInterval(interval);
+    //         } else {
+    //             interval = setInterval(() => {
+    //                 loadItems();
+    //             }, 30000);
+    //         }
+    //     };
+    //
+    //     if (!document.hidden) {
+    //         interval = setInterval(() => {
+    //             loadItems();
+    //         }, 30000);
+    //     }
+    //
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
+    //
+    //     return () => {
+    //         if (interval) clearInterval(interval);
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    // }, [loadItems]);
 
     const handleAddItem = (item: Omit<GalleryItem, 'id' | 'createdAt' | 'image' | 'hint'>) => {
         startTransition(async () => {

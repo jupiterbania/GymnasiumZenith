@@ -2,11 +2,11 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, UserCheck, Image as ImageIcon, IndianRupee, FileText, Loader2, RefreshCw } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Users, UserCheck, Image as ImageIcon, IndianRupee, FileText, Loader2, RefreshCw, ArrowRight } from "lucide-react";
 import { Member, GalleryItem, Post } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { getMembers, getGalleryItems, getPosts } from "@/lib/actions";
 import { useEffect, useState, useCallback } from "react";
@@ -43,38 +43,37 @@ const DashboardPage = () => {
         loadData();
     }, [loadData]);
 
-    // Auto-refresh data every 30 seconds to keep dashboard current
-    // Only refresh when the page is visible and user is not actively working
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-        
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                // Page is hidden, clear interval
-                if (interval) clearInterval(interval);
-            } else {
-                // Page is visible, start interval
-                interval = setInterval(() => {
-                    loadData();
-                }, 30000); // 30 seconds
-            }
-        };
-
-        // Only start auto-refresh if page is visible
-        if (!document.hidden) {
-            interval = setInterval(() => {
-                loadData();
-            }, 30000);
-        }
-
-        // Listen for visibility changes
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        return () => {
-            if (interval) clearInterval(interval);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [loadData]);
+    // Auto-refresh disabled - only manual refresh available
+    // useEffect(() => {
+    //     let interval: NodeJS.Timeout;
+    //     
+    //     const handleVisibilityChange = () => {
+    //         if (document.hidden) {
+    //             // Page is hidden, clear interval
+    //             if (interval) clearInterval(interval);
+    //         } else {
+    //             // Page is visible, start interval
+    //             interval = setInterval(() => {
+    //                 loadData();
+    //             }, 30000); // 30 seconds
+    //         }
+    //     };
+    //
+    //     // Only start auto-refresh if page is visible
+    //     if (!document.hidden) {
+    //         interval = setInterval(() => {
+    //                 loadData();
+    //             }, 30000);
+    //     }
+    //
+    //     // Listen for visibility changes
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
+    //
+    //     return () => {
+    //         if (interval) clearInterval(interval);
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    // }, [loadData]);
 
 
     const totalMembers = members.length;
@@ -102,7 +101,10 @@ const DashboardPage = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                <h1 className="text-2xl sm:text-3xl font-bold font-headline">Dashboard</h1>
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold font-headline">Gymnasium Zenith Dashboard</h1>
+                    <p className="text-muted-foreground mt-1">Welcome back! Here's an overview of your gym's performance and recent activities.</p>
+                </div>
                 <Button 
                     variant="outline" 
                     onClick={loadData}
@@ -164,6 +166,54 @@ const DashboardPage = () => {
                     ))}
                      {posts.length === 0 && (
                         <p className="text-muted-foreground col-span-2">No posts have been created yet.</p>
+                    )}
+                </div>
+            </div>
+
+            <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold font-headline">Recent Members</h2>
+                    <Button variant="outline" asChild>
+                        <Link href="/admin/members">View All Members <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    </Button>
+                </div>
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {members.slice(0, 8).map(member => (
+                        <Link href={`/admin/members`} key={member.id}>
+                            <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                                <div className="relative h-48 w-full">
+                                    <Image 
+                                        src={member.photoUrl || 'https://placehold.co/400x300.png?text=No+Photo'} 
+                                        alt={member.fullName} 
+                                        fill 
+                                        className="object-cover"
+                                        data-ai-hint="member photo"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                        <h3 className="font-semibold text-lg">{member.fullName}</h3>
+                                        <p className="text-sm opacity-90">Member ID: {member.memberId}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className={`w-2 h-2 rounded-full ${member.status === 'active' ? 'bg-green-400' : 'bg-red-400'}`} />
+                                            <span className="text-xs capitalize">{member.status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <CardContent className="p-4">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-muted-foreground">Monthly Fee:</span>
+                                        <span className="font-semibold">₹{member.monthlyFee}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm mt-1">
+                                        <span className="text-muted-foreground">Join Date:</span>
+                                        <span>{new Date(member.startDate).toLocaleDateString()}</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                    {members.length === 0 && (
+                        <p className="text-muted-foreground col-span-full text-center py-8">No members have been added yet.</p>
                     )}
                 </div>
             </div>

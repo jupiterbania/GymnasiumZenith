@@ -156,7 +156,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </Sidebar>
         <SidebarInset>
           <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
+            <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-2">
                     <SidebarTrigger className="text-foreground" />
                 </div>
@@ -189,7 +189,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
           </header>
-          <main className="flex-1 p-4 md:p-8">{children}</main>
+          <main className="flex-1 p-4 md:p-8 lg:p-10">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
