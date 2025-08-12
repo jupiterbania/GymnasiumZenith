@@ -59,13 +59,32 @@ const PostsAdminPage = () => {
         loadPosts();
     }, [loadPosts]);
 
-    // Auto-refresh data every 30 seconds
+    // Auto-refresh data every 30 seconds - only when page is visible
     useEffect(() => {
-        const interval = setInterval(() => {
-            loadPosts();
-        }, 30000);
+        let interval: NodeJS.Timeout;
+        
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                if (interval) clearInterval(interval);
+            } else {
+                interval = setInterval(() => {
+                    loadPosts();
+                }, 30000);
+            }
+        };
 
-        return () => clearInterval(interval);
+        if (!document.hidden) {
+            interval = setInterval(() => {
+                loadPosts();
+            }, 30000);
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            if (interval) clearInterval(interval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
     }, [loadPosts]);
 
     const handleAddPost = (item: Omit<Post, 'id' | 'createdAt'>) => {
@@ -125,24 +144,25 @@ const PostsAdminPage = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold font-headline">Posts Management</h1>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline">Posts Management</h1>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button 
             variant="outline" 
             onClick={loadPosts}
             disabled={isLoading}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 flex-1 sm:flex-none"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Refresh</span>
           </Button>
           <AddPostDialog onAddPost={handleAddPost}>
-              <Button><PlusCircle className="mr-2 h-4 w-4" /> Add New Post</Button>
+              <Button className="w-full sm:w-auto"><PlusCircle className="mr-2 h-4 w-4" /> <span className="hidden sm:inline">Add New Post</span><span className="sm:hidden">Add Post</span></Button>
           </AddPostDialog>
         </div>
       </div>
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <Card key={post.id} className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
             <PostCardWrapper post={post}>

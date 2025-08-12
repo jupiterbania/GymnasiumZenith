@@ -43,13 +43,47 @@ interface AddMemberDialogProps {
 export function AddMemberDialog({ member, onAddMember, onUpdateMember, children }: AddMemberDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Member>>({});
+  const [dobYear, setDobYear] = useState<string>('');
+  const [dobMonth, setDobMonth] = useState<string>('');
+  const [dobDay, setDobDay] = useState<string>('');
   const { toast } = useToast();
   const isEditMode = !!member;
+
+  // Generate years (1900 to current year)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
+
+  // Generate months
+  const months = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  // Generate days (1-31)
+  const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
 
   useEffect(() => {
     const initializeForm = async () => {
         if (member && open) {
           setFormData(JSON.parse(JSON.stringify(member))); // Deep copy to avoid direct mutation
+          
+          // Parse existing DOB
+          if (member.dob) {
+            const dobDate = new Date(member.dob);
+            setDobYear(dobDate.getFullYear().toString());
+            setDobMonth(String(dobDate.getMonth() + 1).padStart(2, '0'));
+            setDobDay(String(dobDate.getDate()).padStart(2, '0'));
+          }
         } else if (!isEditMode && open) {
             let defaultAdmissionFee = 1000;
             let defaultMonthlyFee = 500;
@@ -76,10 +110,24 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
             statusHistory: [],
             showOnHomepage: false,
           });
+          
+          // Set current date for DOB
+          const today = new Date();
+          setDobYear(today.getFullYear().toString());
+          setDobMonth(String(today.getMonth() + 1).padStart(2, '0'));
+          setDobDay(String(today.getDate()).padStart(2, '0'));
         }
     }
     initializeForm();
   }, [member, open, isEditMode]);
+
+  // Update DOB when year, month, or day changes
+  useEffect(() => {
+    if (dobYear && dobMonth && dobDay) {
+      const dobString = `${dobYear}-${dobMonth}-${dobDay}`;
+      handleChange('dob', dobString);
+    }
+  }, [dobYear, dobMonth, dobDay]);
 
   const handleChange = (field: keyof Member, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -92,8 +140,7 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
     }
   }
 
-
-  const handleDateChange = (field: 'dob' | 'startDate', date: Date | undefined) => {
+  const handleDateChange = (field: 'startDate', date: Date | undefined) => {
     if(date){
         handleChange(field, date.toISOString().split('T')[0]);
     }
@@ -160,7 +207,6 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
     }
   };
 
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isEditMode && onUpdateMember) {
@@ -176,7 +222,7 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
       <DialogTrigger asChild>
         {children || <Button><PlusCircle className="mr-2 h-4 w-4" /> Add Member</Button>}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-headline">{isEditMode ? 'Edit Member' : 'Add New Member'}</DialogTitle>
           <DialogDescription>
@@ -184,12 +230,12 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-4">
+                            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2 sm:pr-4">
                 <div className="space-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
                     <Input id="fullName" value={formData.fullName || ''} onChange={e => handleChange('fullName', e.target.value)} />
                 </div>
-                 <div className="grid grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="admissionFee">Admission Fee (₹)</Label>
                         <Input 
@@ -239,14 +285,54 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
                         </div>
                     )}
                  </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="dob">Date of Birth</Label>
-                        <DatePicker 
-                            date={formData.dob ? new Date(formData.dob) : undefined}
-                            onDateChange={(date) => handleDateChange('dob', date)}
-                        />
+                        <Label htmlFor="dobYear">Date of Birth - Year</Label>
+                        <Select value={dobYear} onValueChange={setDobYear}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {years.map(year => (
+                                    <SelectItem key={year} value={year.toString()}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="dobMonth">Month</Label>
+                        <Select value={dobMonth} onValueChange={setDobMonth}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Month" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {months.map(month => (
+                                    <SelectItem key={month.value} value={month.value}>
+                                        {month.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="dobDay">Day</Label>
+                        <Select value={dobDay} onValueChange={setDobDay}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Day" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {days.map(day => (
+                                    <SelectItem key={day} value={day}>
+                                        {day}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="gender">Gender</Label>
                         <Select value={formData.gender} onValueChange={value => handleChange('gender', value)}>
@@ -261,7 +347,7 @@ export function AddMemberDialog({ member, onAddMember, onUpdateMember, children 
                         </Select>
                     </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
                         <Input id="phone" type="tel" value={formData.phone || ''} onChange={e => handleChange('phone', e.target.value)} />

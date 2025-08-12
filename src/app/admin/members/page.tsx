@@ -110,13 +110,32 @@ export default function MembersPage() {
     loadData();
   }, [loadData]);
 
-  // Auto-refresh data every 30 seconds
+  // Auto-refresh data every 30 seconds - only when page is visible
   useEffect(() => {
-    const interval = setInterval(() => {
-      loadData();
-    }, 30000);
+    let interval: NodeJS.Timeout;
+    
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (interval) clearInterval(interval);
+      } else {
+        interval = setInterval(() => {
+          loadData();
+        }, 30000);
+      }
+    };
 
-    return () => clearInterval(interval);
+    if (!document.hidden) {
+      interval = setInterval(() => {
+        loadData();
+      }, 30000);
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (interval) clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [loadData]);
 
   const handleSaveFees = () => {
@@ -306,16 +325,17 @@ export default function MembersPage() {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-        <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold font-headline">Members Management</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold font-headline">Members Management</h1>
             <Button 
                 variant="outline" 
                 onClick={loadData}
                 disabled={isLoading}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
             >
                 <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                Refresh Data
+                <span className="hidden sm:inline">Refresh Data</span>
+                <span className="sm:hidden">Refresh</span>
             </Button>
         </div>
         <Card>

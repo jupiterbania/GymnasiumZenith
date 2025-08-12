@@ -59,13 +59,32 @@ const GalleryAdminPage = () => {
         loadItems();
     }, [loadItems]);
 
-    // Auto-refresh data every 30 seconds
+    // Auto-refresh data every 30 seconds - only when page is visible
     useEffect(() => {
-        const interval = setInterval(() => {
-            loadItems();
-        }, 30000);
+        let interval: NodeJS.Timeout;
+        
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                if (interval) clearInterval(interval);
+            } else {
+                interval = setInterval(() => {
+                    loadItems();
+                }, 30000);
+            }
+        };
 
-        return () => clearInterval(interval);
+        if (!document.hidden) {
+            interval = setInterval(() => {
+                loadItems();
+            }, 30000);
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            if (interval) clearInterval(interval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
     }, [loadItems]);
 
     const handleAddItem = (item: Omit<GalleryItem, 'id' | 'createdAt' | 'image' | 'hint'>) => {
@@ -116,22 +135,23 @@ const GalleryAdminPage = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold font-headline">Gallery Management</h1>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline">Gallery Management</h1>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button 
             variant="outline" 
             onClick={loadItems}
             disabled={isLoading}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 flex-1 sm:flex-none"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Refresh</span>
           </Button>
           <AddItemDialog onAddItem={handleAddItem} />
         </div>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {galleryItems.map((item) => (
           <Card key={item.id} className="overflow-hidden">
             <CardHeader className="p-0">

@@ -180,13 +180,15 @@ const IncomePage = () => {
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
         
         const netIncome = totalIncome - totalExpenses;
+        
+        // Summary section with net totals
         autoTable(doc, {
             startY: 45,
             head: [['Metric', 'Amount (INR)']],
             body: [
                 ['Total Gross Income', `INR ${totalIncome.toLocaleString()}`],
                 ['Total Expenses', `INR ${totalExpenses.toLocaleString()}`],
-                ['Net Income/Loss', `INR ${netIncome.toLocaleString()}`],
+                ['Net Total Income/Loss', `INR ${netIncome.toLocaleString()}`],
             ],
             theme: 'striped',
             headStyles: { fillColor: [37, 99, 235] },
@@ -200,8 +202,9 @@ const IncomePage = () => {
         
         const finalYSummary = (doc as any).lastAutoTable.finalY;
 
+        // Income Breakdown section with net totals
         doc.setFontSize(14);
-        doc.text("Income Breakdown", 14, finalYSummary + 15);
+        doc.text("Income Breakdown by Month", 14, finalYSummary + 15);
         autoTable(doc, {
             startY: finalYSummary + 20,
             head: [['Month', 'Monthly Fees (INR)', 'Admission Fees (INR)', 'Gross Income (INR)', 'Expenses (INR)', 'Net Income (INR)']],
@@ -230,10 +233,50 @@ const IncomePage = () => {
 
         const finalYIncome = (doc as any).lastAutoTable.finalY;
 
-        doc.setFontSize(14);
-        doc.text("Expense Log", 14, finalYIncome + 15);
+        // Add summary row to income breakdown
+        const totalPayments = monthlyData.reduce((sum, item) => sum + item.payments, 0);
+        const totalAdmissions = monthlyData.reduce((sum, item) => sum + item.admissions, 0);
+        const totalGrossIncome = monthlyData.reduce((sum, item) => sum + item.grossIncome, 0);
+        const totalExpensesFromData = monthlyData.reduce((sum, item) => sum + item.expenses, 0);
+        const totalNetIncome = monthlyData.reduce((sum, item) => sum + item.netIncome, 0);
+
         autoTable(doc, {
-            startY: finalYIncome + 20,
+            startY: finalYIncome + 5,
+            head: [['TOTALS', 'Monthly Fees (INR)', 'Admission Fees (INR)', 'Gross Income (INR)', 'Expenses (INR)', 'Net Income (INR)']],
+            body: [
+                ['SUMMARY', 
+                 `INR ${totalPayments.toLocaleString()}`, 
+                 `INR ${totalAdmissions.toLocaleString()}`, 
+                 `INR ${totalGrossIncome.toLocaleString()}`, 
+                 `INR ${totalExpensesFromData.toLocaleString()}`, 
+                 `INR ${totalNetIncome.toLocaleString()}`
+                ]
+            ],
+            theme: 'grid',
+            headStyles: { fillColor: [37, 99, 235], fontStyle: 'bold' },
+            bodyStyles: { fontStyle: 'bold' },
+            didParseCell: (data) => {
+                if (data.column.dataKey === 5) { // Net Income column
+                    const cellNetIncomeText = data.cell.raw?.toString().replace(/[^0-9.-]+/g,"");
+                    if (cellNetIncomeText) {
+                        const cellNetIncome = parseFloat(cellNetIncomeText);
+                        if (cellNetIncome < 0) {
+                            data.cell.styles.textColor = [255, 0, 0];
+                        } else {
+                            data.cell.styles.textColor = [0, 128, 0];
+                        }
+                    }
+                }
+            }
+        });
+
+        const finalYIncomeSummary = (doc as any).lastAutoTable.finalY;
+
+        // Expense Log section with net total
+        doc.setFontSize(14);
+        doc.text("Expense Log", 14, finalYIncomeSummary + 15);
+        autoTable(doc, {
+            startY: finalYIncomeSummary + 20,
             head: [['Date', 'Description', 'Amount (INR)']],
             body: expenses.map(item => [
                 new Date(item.date).toLocaleDateString(),
@@ -242,6 +285,20 @@ const IncomePage = () => {
             ]),
             theme: 'grid',
             headStyles: { fillColor: [37, 99, 235] }
+        });
+
+        const finalYExpenses = (doc as any).lastAutoTable.finalY;
+
+        // Add total expenses summary
+        autoTable(doc, {
+            startY: finalYExpenses + 5,
+            head: [['Total Expenses', 'Amount (INR)']],
+            body: [
+                ['Net Total Expenses', `INR ${totalExpenses.toLocaleString()}`]
+            ],
+            theme: 'grid',
+            headStyles: { fillColor: [37, 99, 235], fontStyle: 'bold' },
+            bodyStyles: { fontStyle: 'bold' }
         });
 
         doc.save(`financial-report-${new Date().toISOString().split('T')[0]}.pdf`);
@@ -256,6 +313,7 @@ const IncomePage = () => {
         doc.text(`Monthly Report: ${item.month}`, 14, 30);
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
 
+        // Summary section with net totals
         autoTable(doc, {
             startY: 45,
             head: [['Category', 'Amount (INR)']],
@@ -264,7 +322,7 @@ const IncomePage = () => {
                 ['Admission Fees', `INR ${item.admissions.toLocaleString()}`],
                 { content: `Total Gross Income: INR ${item.grossIncome.toLocaleString()}`, styles: { fontStyle: 'bold' } },
                 ['Expenses', `INR ${item.expenses.toLocaleString()}`],
-                { content: `Net Income/Loss: INR ${item.netIncome.toLocaleString()}`, styles: { fontStyle: 'bold', textColor: item.netIncome >= 0 ? [0, 128, 0] : [255, 0, 0] } },
+                { content: `Net Total Income/Loss: INR ${item.netIncome.toLocaleString()}`, styles: { fontStyle: 'bold', textColor: item.netIncome >= 0 ? [0, 128, 0] : [255, 0, 0] } },
             ],
             theme: 'striped',
             headStyles: { fillColor: [37, 99, 235] }
@@ -282,6 +340,18 @@ const IncomePage = () => {
                 theme: 'grid',
                 headStyles: { fillColor: [37, 99, 235] }
             });
+            
+            // Add total for payments section
+            const totalPayments = item.paymentDetails.reduce((sum, p) => sum + p.amount, 0);
+            autoTable(doc, {
+                startY: (doc as any).lastAutoTable.finalY + 5,
+                head: [['Total Monthly Fees', 'Amount (INR)']],
+                body: [['Net Total', `INR ${totalPayments.toLocaleString()}`]],
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235], fontStyle: 'bold' },
+                bodyStyles: { fontStyle: 'bold' }
+            });
+            
             finalY = (doc as any).lastAutoTable.finalY;
         }
 
@@ -295,6 +365,18 @@ const IncomePage = () => {
                 theme: 'grid',
                 headStyles: { fillColor: [37, 99, 235] }
             });
+            
+            // Add total for admissions section
+            const totalAdmissions = item.admissionDetails.reduce((sum, m) => sum + m.admissionFee, 0);
+            autoTable(doc, {
+                startY: (doc as any).lastAutoTable.finalY + 5,
+                head: [['Total Admission Fees', 'Amount (INR)']],
+                body: [['Net Total', `INR ${totalAdmissions.toLocaleString()}`]],
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235], fontStyle: 'bold' },
+                bodyStyles: { fontStyle: 'bold' }
+            });
+            
             finalY = (doc as any).lastAutoTable.finalY;
         }
 
@@ -307,6 +389,17 @@ const IncomePage = () => {
                 body: item.expenseDetails.map(e => [new Date(e.date).toLocaleDateString(), e.description, `INR ${e.amount.toLocaleString()}`]),
                 theme: 'grid',
                 headStyles: { fillColor: [37, 99, 235] }
+            });
+            
+            // Add total for expenses section
+            const totalExpenses = item.expenseDetails.reduce((sum, e) => sum + e.amount, 0);
+            autoTable(doc, {
+                startY: (doc as any).lastAutoTable.finalY + 5,
+                head: [['Total Expenses', 'Amount (INR)']],
+                body: [['Net Total', `INR ${totalExpenses.toLocaleString()}`]],
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235], fontStyle: 'bold' },
+                bodyStyles: { fontStyle: 'bold' }
             });
         }
 
@@ -321,16 +414,17 @@ const IncomePage = () => {
     <div className="space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
-                <h1 className="text-3xl font-bold font-headline">Income/Expenses</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold font-headline">Income/Expenses</h1>
                 <p className="text-muted-foreground">Track your gym's income and expenses.</p>
             </div>
             <Button onClick={handleGeneratePdf} className="w-full sm:w-auto">
                 <FileDown className="mr-2 h-4 w-4" />
-                Generate PDF Report
+                <span className="hidden sm:inline">Generate PDF Report</span>
+                <span className="sm:hidden">Generate PDF</span>
             </Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Gross Income</CardTitle>

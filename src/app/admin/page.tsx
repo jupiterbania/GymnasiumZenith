@@ -44,12 +44,36 @@ const DashboardPage = () => {
     }, [loadData]);
 
     // Auto-refresh data every 30 seconds to keep dashboard current
+    // Only refresh when the page is visible and user is not actively working
     useEffect(() => {
-        const interval = setInterval(() => {
-            loadData();
-        }, 30000); // 30 seconds
+        let interval: NodeJS.Timeout;
+        
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                // Page is hidden, clear interval
+                if (interval) clearInterval(interval);
+            } else {
+                // Page is visible, start interval
+                interval = setInterval(() => {
+                    loadData();
+                }, 30000); // 30 seconds
+            }
+        };
 
-        return () => clearInterval(interval);
+        // Only start auto-refresh if page is visible
+        if (!document.hidden) {
+            interval = setInterval(() => {
+                loadData();
+            }, 30000);
+        }
+
+        // Listen for visibility changes
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            if (interval) clearInterval(interval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
     }, [loadData]);
 
 
@@ -78,18 +102,19 @@ const DashboardPage = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold font-headline">Dashboard</h1>
                 <Button 
                     variant="outline" 
                     onClick={loadData}
                     disabled={isLoading}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 w-full sm:w-auto"
                 >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    Refresh Data
+                    <span className="hidden sm:inline">Refresh Data</span>
+                    <span className="sm:hidden">Refresh</span>
                 </Button>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat, index) => (
                     <Link href={stat.href} key={index}>
                         <Card className="hover:bg-muted/50 transition-colors">
@@ -117,7 +142,7 @@ const DashboardPage = () => {
                         <Link href="/admin/posts">View All Posts <ArrowRight className="ml-2 h-4 w-4" /></Link>
                     </Button>
                 </div>
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
                     {posts.slice(0, 2).map(post => (
                         <Card key={post.id} className="overflow-hidden flex">
                             {post.imageUrl && (

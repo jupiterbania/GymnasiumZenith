@@ -116,6 +116,35 @@ export function MemberActions<TData extends Member>({ row, table }: MemberAction
       }
     });
 
+    // Add payment summary with net totals
+    const paidPayments = member.payments?.filter(p => p.status === 'Paid') || [];
+    const unpaidPayments = member.payments?.filter(p => p.status === 'Unpaid') || [];
+    const totalPaid = paidPayments.reduce((sum, p) => sum + p.amount, 0);
+    const totalUnpaid = unpaidPayments.reduce((sum, p) => sum + p.amount, 0);
+    const totalPayments = member.payments?.reduce((sum, p) => p.status !== 'Inactive' ? sum + p.amount : sum, 0) || 0;
+
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 10,
+      head: [['Payment Summary', 'Amount (INR)']],
+      body: [
+        ['Total Paid Amount', `INR ${totalPaid.toLocaleString()}`],
+        ['Total Unpaid Amount', `INR ${totalUnpaid.toLocaleString()}`],
+        ['Net Total Payments', `INR ${totalPayments.toLocaleString()}`],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [86, 75, 255], fontStyle: 'bold' },
+      bodyStyles: { fontStyle: 'bold' },
+      didParseCell: (data) => {
+        if (data.row.index === 0 && data.column.index === 1) { // Total Paid
+          data.cell.styles.textColor = [40, 167, 69];
+        } else if (data.row.index === 1 && data.column.index === 1) { // Total Unpaid
+          data.cell.styles.textColor = [220, 53, 69];
+        } else if (data.row.index === 2 && data.column.index === 1) { // Net Total
+          data.cell.styles.textColor = [86, 75, 255];
+        }
+      }
+    });
+
     doc.save(`payment-history-${member.memberId}.pdf`);
     toast({
         title: "Download Started",
