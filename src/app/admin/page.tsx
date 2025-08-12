@@ -83,11 +83,44 @@ const DashboardPage = () => {
         .filter(m => m.status === 'active')
         .reduce((acc, member) => acc + member.monthlyFee, 0);
 
+    // Get sample members for profile photos
+    const sampleMembers = members.slice(0, 3);
+    const sampleGalleryItems = galleryItems.slice(0, 2);
+    const samplePosts = posts.slice(0, 1);
+
     const stats = [
-        { title: "Total Members", value: totalMembers.toString(), icon: <Users className="h-6 w-6 text-muted-foreground" />, color: "text-blue-500", href: "/admin/members" },
-        { title: "Active Members", value: activeMembers.toString(), icon: <UserCheck className="h-6 w-6 text-muted-foreground" />, color: "text-green-500", href: "/admin/members" },
-        { title: "Gallery Items", value: totalGalleryItems.toString(), icon: <ImageIcon className="h-6 w-6 text-muted-foreground" />, color: "text-purple-500", href: "/admin/gallery" },
-        { title: "Posts", value: posts.length.toString(), icon: <FileText className="h-6 w-6 text-muted-foreground" />, color: "text-orange-500", href: "/admin/posts" },
+        { 
+            title: "Total Members", 
+            value: totalMembers.toString(), 
+            icon: <Users className="h-6 w-6 text-muted-foreground" />, 
+            color: "text-blue-500", 
+            href: "/admin/members",
+            photos: sampleMembers.map(m => m.photoUrl || 'https://placehold.co/40x40.png?text=No+Photo')
+        },
+        { 
+            title: "Active Members", 
+            value: activeMembers.toString(), 
+            icon: <UserCheck className="h-6 w-6 text-muted-foreground" />, 
+            color: "text-green-500", 
+            href: "/admin/members",
+            photos: members.filter(m => m.status === 'active').slice(0, 3).map(m => m.photoUrl || 'https://placehold.co/40x40.png?text=No+Photo')
+        },
+        { 
+            title: "Gallery Items", 
+            value: totalGalleryItems.toString(), 
+            icon: <ImageIcon className="h-6 w-6 text-muted-foreground" />, 
+            color: "text-purple-500", 
+            href: "/admin/gallery",
+            photos: sampleGalleryItems.map(item => item.url || item.image || 'https://placehold.co/40x40.png?text=No+Photo')
+        },
+        { 
+            title: "Posts", 
+            value: posts.length.toString(), 
+            icon: <FileText className="h-6 w-6 text-muted-foreground" />, 
+            color: "text-orange-500", 
+            href: "/admin/posts",
+            photos: samplePosts.map(post => post.imageUrl || 'https://placehold.co/40x40.png?text=No+Photo')
+        },
     ];
 
     if (isLoading) {
@@ -127,6 +160,27 @@ const DashboardPage = () => {
                                 <p className="text-xs text-muted-foreground">
                                     Current statistics
                                 </p>
+                                {stat.photos && stat.photos.length > 0 && (
+                                    <div className="flex items-center gap-1 mt-3">
+                                        {stat.photos.slice(0, 3).map((photo, photoIndex) => (
+                                            <div key={photoIndex} className="relative">
+                                                <Image 
+                                                    src={photo} 
+                                                    alt={`${stat.title} photo ${photoIndex + 1}`}
+                                                    width={24} 
+                                                    height={24} 
+                                                    className="rounded-full object-cover border-2 border-background"
+                                                    data-ai-hint={`${stat.title.toLowerCase()} profile photo`}
+                                                />
+                                            </div>
+                                        ))}
+                                        {stat.photos.length > 3 && (
+                                            <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                                                +{stat.photos.length - 3}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </Link>
