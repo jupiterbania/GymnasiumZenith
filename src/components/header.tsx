@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { usePathname } from 'next/navigation';
+import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
     { href: "/gallery", label: "Gallery" },
@@ -41,6 +42,8 @@ const Header = () => {
                     </Link>
                 ))}
             </nav>
+
+            <ThemeToggle />
 
             <div className="hidden md:block">
                 {isAuthenticated ? (
@@ -89,7 +92,10 @@ const Header = () => {
                             ))}
                         </nav>
                     </div>
-                    <div className="mt-auto p-4 border-t">
+                    <div className="mt-auto p-4 border-t space-y-4">
+                        <div className="flex justify-center">
+                            <ThemeToggle />
+                        </div>
                         {isAuthenticated ? (
                             <Button asChild className="w-full">
                                 <Link href="/admin" onClick={() => setIsMenuOpen(false)}>

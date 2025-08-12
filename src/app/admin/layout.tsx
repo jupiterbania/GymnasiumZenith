@@ -38,6 +38,7 @@ import {
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import Logo from '@/components/logo';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -161,6 +162,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     <SidebarTrigger className="text-foreground" />
                 </div>
               <div className="flex items-center gap-4">
+                <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
