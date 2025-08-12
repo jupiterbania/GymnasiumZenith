@@ -5,7 +5,6 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +55,7 @@ export default async function Home() {
                         {featuredMembers.slice(0, 4).map(member => (
                             <div key={member.memberId} className="flex flex-col items-center text-center">
                                 <Avatar className="h-24 w-24 mb-4">
-                                    <AvatarImage src={member.photoUrl || 'https://placehold.co/128x128.png'} alt={member.fullName} data-ai-hint="member portrait" />
+                                    <AvatarImage src={member.photoUrl || 'https://placehold.co/128x128.png'} alt={member.fullName} />
                                     <AvatarFallback>{member.fullName.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <h3 className="font-semibold text-lg">{member.fullName}</h3>
@@ -164,7 +163,7 @@ export default async function Home() {
                             <Card key={item.id} className="overflow-hidden group">
                                 <CardContent className="p-0">
                                     <div className="relative h-56 w-full">
-                                        <Image src={item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill className="object-cover" data-ai-hint={item.hint || 'gym photo'}/>
+                                        <Image src={item.image || 'https://placehold.co/600x400.png'} alt={item.title} fill className="object-cover" />
                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                                     </div>
                                     <div className="p-4">
