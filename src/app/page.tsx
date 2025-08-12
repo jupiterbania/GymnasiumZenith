@@ -95,7 +95,7 @@ export default async function Home() {
                 </div>
                 {recentPosts.length > 0 ? (
                     <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        {recentPosts.slice(0, 6).map(post => (
+                        {recentPosts.slice(0, 3).map(post => (
                             <Card key={post.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                                 <CardContent className="p-0">
                                     {post.imageUrl && (
@@ -129,6 +129,15 @@ export default async function Home() {
                             </Card>
                         ))}
                     </div>
+                    {recentPosts.length > 3 && (
+                        <div className="text-center mt-12">
+                            <Button asChild variant="outline">
+                                <Link href="/admin/posts">
+                                    View More Posts <ArrowRight className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
                 ) : (
                     <div className="text-center text-muted-foreground">
                         <p>No posts have been published yet. Check back soon for updates!</p>
